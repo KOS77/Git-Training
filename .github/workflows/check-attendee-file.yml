@@ -1,0 +1,27 @@
+name: Check attendee file
+
+# Runs on every pull request to main. This is the workshop's introduction to
+# CI: an automated check that runs on every change before it can merge.
+#
+# Note: for pull requests from forks, GitHub runs this workflow with a
+# read-only token, which is all it needs. It only reads files.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # This job name is the status check that branch protection requires.
+    name: Check attendee file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the merged result of the pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate changed files
+        run: bash scripts/check-attendee-file.sh "${{ github.event.pull_request.base.sha }}" HEAD
